@@ -44,7 +44,7 @@ interface PreviewState { loading: boolean; result?: PreviewResult; error?: strin
           <span class="dot" [class.dot-ok]="s.available" [class.dot-off]="!s.available" aria-hidden="true"></span>
           @if (s.available) {
             @if (s.isLlm) { מנוע מוגדר: מודל שפה ({{ s.model ?? s.provider }}). נשלחים אליו שמות עסקיים וסטטיסטיקה מצטברת בלבד – ללא רשומות. אם המודל אינו זמין, הניתוח המקומי עונה במקומו וכל הצעה מסומנת לפי המקור שיצר אותה בפועל. }
-            @else { מנוע מוגדר: ניתוח מקומי מבוסס Metadata וסטטיסטיקה. לא מוגדר מודל שפה (LLM), ולכן ההמלצות דטרמיניסטיות. }
+            @else { מנוע פעיל: ניתוח מקומי מבוסס Metadata וסטטיסטיקה, ללא תלות בשירות חיצוני וללא שליחת נתונים החוצה. אפשר לחבר מודל שפה (Gemini, OpenAI או Ollama מקומי) דרך הגדרות השירות בלבד, בלי שינוי קוד. }
           } @else { שירות ההמלצות אינו זמין כרגע. שאר המערכת פועלת כרגיל – אפשר ליצור ולהריץ בקרות ידנית. }
         </p>
       }

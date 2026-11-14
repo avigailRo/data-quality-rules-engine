@@ -8,6 +8,22 @@
 
 דרישות: SQL Server (מוגדר כברירת מחדל ל־`.\SQLEXPRESS` עם Windows Authentication), ‎.NET SDK 10, Node.js 20.19 ומעלה, Python 3.12 ו־ODBC Driver 17 או 18 for SQL Server.
 
+### הרצה מהירה (מומלץ)
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\start.ps1
+```
+
+או לחיצה כפולה על `start.cmd`. הסקריפט:
+1. בודק שהכלים הנדרשים מותקנים.
+2. מקים את בסיס הנתונים עם נתוני הדוגמה, רק אם הוא עוד לא קיים.
+3. מתקין את חבילות Python ו־npm, רק בהרצה הראשונה.
+4. מפעיל את ה־API, את שירות ההמלצות ואת הממשק, ופותח את הדפדפן בכתובת http://localhost:4200.
+
+ל־SQL Server אחר: `.\start.ps1 -Server <שם השרת>`. לעצירת כל השירותים: `qa\5-stop-services.cmd`.
+
+ההרצה הידנית, שלב אחר שלב:
+
 ### 1. בסיס הנתונים
 
 ```powershell
