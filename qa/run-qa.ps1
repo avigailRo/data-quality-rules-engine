@@ -401,7 +401,7 @@ if ($r.Code -eq 0 -or (Test-Path $venvPy)) {
 if (-not $SkipFrontend) {
     Section 'ANGULAR'
     $fe = Join-Path $root 'frontend'
-    # Filtered networks (NetFree) drop idle connections: fewer sockets, long timeouts, retries.
+    # Proxied / filtered networks may drop idle connections: fewer sockets, long timeouts, retries.
     # These are CLI flags only - package.json / package-lock.json are not touched.
     $npmArgs = @('install', '--no-audit', '--no-fund', '--prefer-offline', '--maxsockets=4',
         '--fetch-timeout=600000', '--fetch-retries=6', '--fetch-retry-mintimeout=20000', '--fetch-retry-maxtimeout=180000')

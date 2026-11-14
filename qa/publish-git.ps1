@@ -18,6 +18,10 @@ if (-not (Test-Path (Join-Path $root '.git'))) { git init -b main | Out-Null; Wr
 if (-not (git config user.name))  { git config user.name  (Read-Host 'Your name for git commits (e.g. Avigail R.)') }
 if (-not (git config user.email)) { git config user.email (Read-Host 'Your email for git commits (the one on your GitHub account)') }
 
+# files that were renamed/retired and must not be published (deleted with the owner's approval)
+foreach ($old in @('docs\interview-guide.md')) {
+    if (Test-Path (Join-Path $root $old)) { Remove-Item (Join-Path $root $old) -Force; Write-Host "removed retired file: $old" }
+}
 git add -A
 $files = @(git diff --cached --name-only)
 Write-Host "files to commit: $($files.Count)"

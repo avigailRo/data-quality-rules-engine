@@ -176,7 +176,7 @@ def _is_external(url: str) -> bool:
 
 def _tls_context() -> ssl.SSLContext:
     """TLS verification through the operating system's trust store (Windows CryptoAPI / macOS Keychain).
-    Needed behind TLS-inspecting filters (e.g. NetFree) whose root CA is trusted by Windows but not by
+    Needed on networks with TLS inspection, whose root CA is trusted by Windows but not by
     Python's bundled CA list. Verification stays fully on - nothing is disabled.
     DQ_LLM_CA_BUNDLE (optional): a PEM file of trusted public CA certificates (e.g. exported from the Windows
     trust store by qa/run-llm-e2e.ps1) used in addition to the default CA list."""
