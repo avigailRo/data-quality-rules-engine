@@ -9,7 +9,7 @@
 .USAGE
   powershell -NoProfile -ExecutionPolicy Bypass -File .\start.ps1 [-Server .\SQLEXPRESS]
   (or double-click start.cmd)
-  Stop everything with: qa\5-stop-services.cmd
+  Stop everything with: qa\stop-services.cmd
 #>
 param([string]$Server = '.\SQLEXPRESS')
 $ErrorActionPreference = 'Continue'
@@ -120,4 +120,4 @@ if ($apiUp -and $webUp) {
     Write-Host ''
     Write-Host "Ready: http://localhost:$webPort  (opened in your browser)" -ForegroundColor Green
 }
-Write-Host 'Stop everything with qa\5-stop-services.cmd'
+Write-Host 'Stop everything with qa\stop-services.cmd'

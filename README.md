@@ -20,7 +20,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\start.ps1
 3. מתקין את חבילות Python ו־npm, רק בהרצה הראשונה.
 4. מפעיל את ה־API, את שירות ההמלצות ואת הממשק, ופותח את הדפדפן בכתובת http://localhost:4200.
 
-ל־SQL Server אחר: `.\start.ps1 -Server <שם השרת>`. לעצירת כל השירותים: `qa\5-stop-services.cmd`.
+ל־SQL Server אחר: `.\start.ps1 -Server <שם השרת>`. לעצירת כל השירותים: `qa\stop-services.cmd`.
 
 ההרצה הידנית, שלב אחר שלב:
 
@@ -82,7 +82,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\qa\run-llm-e2e.ps1
 | אימות TLS ברשת עם TLS Inspection (שרשרת התעודות מ־Windows, ללא כיבוי אימות) | עבר |
 | מפתח שגוי: ‏Gemini מחזיר HTTP 400, המערכת עוברת לניתוח המקומי ומסמנת את ההצעות כ"ניתוח מקומי" | עבר |
 | אין שמירה של בקרה לפני אישור אנושי | עבר |
-| המלצה של Gemini עם מפתח תקין | **לא הושלמה:** ‏HTTP 503 (המודל עמוס) ואחר כך Timeout, גם לבקשה זעירה של שורה אחת (`qa/gemini-probe.ps1`). לא אומת אם המקור הוא עומס אצל Google או מגבלה של הרשת המקומית |
+| המלצה של Gemini עם מפתח תקין | **לא הושלמה:** ‏HTTP 503 (המודל עמוס) ואחר כך Timeout, גם לבקשה זעירה של שורה אחת. לא אומת אם המקור הוא עומס אצל Google או מגבלה של הרשת המקומית |
 
 בעקבות זה נוספו: ניסיון חוזר על 429/5xx, מעבר למודל חלופי (`DQ_LLM_FALLBACK_MODELS`), ותקציב זמן כולל לקריאה, כך שהניתוח המקומי עונה תמיד לפני ה־Timeout של ה־API.
 
@@ -119,7 +119,7 @@ npm start                                     # http://localhost:4200
 powershell -NoProfile -ExecutionPolicy Bypass -File .\qa\run-qa.ps1
 ```
 
-ב־Windows אפשר גם ללחוץ לחיצה כפולה על `qa\1-run-qa.cmd`. התוצאות נשמרות ב־`qa/qa-log.txt`.
+ב־Windows אפשר גם ללחוץ לחיצה כפולה על `qa\run-qa.cmd`. התוצאות נשמרות ב־`qa/qa-log.txt`.
 
 ## בקרות לדוגמה (נטענות מראש) והתוצאות הצפויות
 

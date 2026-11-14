@@ -17,3 +17,15 @@ qa/*.pem
 .env.*
 **/appsettings.*.local.json
 qa/proxy.qa.json
+# developer-only tools (kept locally, not part of the submission)
+qa/publish-git.ps1
+qa/gemini-probe.ps1
+qa/cleanup-demo-data.ps1
+qa/0-start-demo.cmd
+qa/1-run-qa.cmd
+qa/2-publish-to-github.cmd
+qa/3-gemini-probe.cmd
+qa/4-cleanup-demo-data.cmd
+qa/5-stop-services.cmd
+qa/6-llm-test-gemini.cmd
+qa/7-llm-test-local-ollama.cmd
