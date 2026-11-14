@@ -13,6 +13,7 @@
   Log: qa\llm-e2e-log.txt
 #>
 param(
+    [switch]$Local,   # local model through Ollama (http://localhost:11434/v1) - no API key, data never leaves the machine
     [string]$BaseUrl = 'https://generativelanguage.googleapis.com/v1beta/openai',
     [string]$Model = '',
     [string]$Server = '.\SQLEXPRESS',
@@ -93,7 +94,7 @@ function Start-Ai([hashtable]$envVars, [string]$tag) {
     if (-not (Stop-Ai)) { Log "[FAIL] port $($script:aiPort) is still in use by another process - cannot start the AI service"; $script:fail++; return $false }
     $names = 'DQ_LLM_PROVIDER', 'DQ_LLM_BASE_URL', 'DQ_LLM_MODEL', 'DQ_LLM_API_KEY', 'DQ_LLM_TIMEOUT_SECONDS', 'DQ_LLM_REASONING_EFFORT', 'DQ_LLM_CA_BUNDLE', 'DQ_LLM_FALLBACK_MODELS'
     foreach ($n in $names) { Remove-Item "Env:$n" -ErrorAction SilentlyContinue }
-    foreach ($k in $envVars.Keys) { Set-Item "Env:$k" $envVars[$k] }   # inherited by the child process only
+    foreach ($k in $envVars.Keys) { if ($envVars[$k]) { Set-Item "Env:$k" $envVars[$k] } }   # inherited by the child process only
     $aiDir = Join-Path $root 'ai-service'
     $py = Join-Path $aiDir '.venv\Scripts\python.exe'
     $p = Start-Process -FilePath $py -ArgumentList @('-m', 'uvicorn', 'app.main:app', '--port', "$($script:aiPort)") -WorkingDirectory $aiDir `
@@ -112,15 +113,20 @@ function Start-Ai([hashtable]$envVars, [string]$tag) {
 Section 'API KEY'
 # Regular paste (Ctrl+V or right-click). A plain prompt is used because a hidden prompt in Windows PowerShell
 # turns Ctrl+V into a control character. The screen is cleared right after, and the key is never logged.
-for ($try = 1; $try -le 3 -and -not $script:secret; $try++) {
+if ($Local) {
+    if ($BaseUrl -like '*googleapis*') { $BaseUrl = 'http://localhost:11434/v1' }
+    if (-not $Model) { $Model = 'qwen2.5:3b' }
+    Log "local model mode: $BaseUrl, model $Model (no API key)"
+}
+for ($try = 1; $try -le 3 -and -not $script:secret -and -not $Local; $try++) {
     $typed = Read-Host 'Paste the Gemini API key and press Enter'
     $candidate = ([string]$typed -replace '[\x00-\x20\x7F]', '')
     Clear-Host
     if ($candidate.Length -ge 20) { $script:secret = $candidate }
     else { Write-Host "No valid key found (got $($candidate.Length) characters). Paste the key again." -ForegroundColor Yellow }
 }
-if (-not $script:secret) { Log 'No valid key entered - stopping.'; exit 1 }
-Log "key received (length $($script:secret.Length), not logged)"
+if (-not $script:secret -and -not $Local) { Log 'No valid key entered - stopping.'; exit 1 }
+if (-not $Local) { Log "key received (length $($script:secret.Length), not logged)" }
 
 # =====================================================================
 Section 'PROVIDER REACHABILITY'
@@ -156,6 +162,11 @@ $fallbackModels = @($models | Where-Object { $_ -ne $Model -and $_ -match '^gemi
     Sort-Object { [double](($_ -replace '^gemini-', '') -replace '-flash(-lite)?$', '') } -Descending | Select-Object -First 3)
 Check 'model selected' ([bool]$Model) "$Model (backups: $($fallbackModels -join ', '))"
 if (-not $Model) { exit 1 }
+if ($Local -and $models.Count -gt 0 -and -not ($models -contains $Model)) {
+    Check "local model '$Model' is installed" $false "installed: $($models -join ', ')"
+    Log "Install it first:  ollama pull $Model"
+    exit 1
+}
 
 # =====================================================================
 Section 'START SERVICES (API + AI service with the LLM)'
@@ -236,6 +247,7 @@ $llmEnv = @{
     DQ_LLM_PROVIDER = 'openai'; DQ_LLM_BASE_URL = $BaseUrl; DQ_LLM_MODEL = $Model; DQ_LLM_API_KEY = $script:secret
     DQ_LLM_TIMEOUT_SECONDS = '90'; DQ_LLM_REASONING_EFFORT = 'low'; DQ_LLM_FALLBACK_MODELS = ($fallbackModels -join ',')
 }
+if ($Local) { $llmEnv.DQ_LLM_TIMEOUT_SECONDS = '180'; $llmEnv.Remove('DQ_LLM_REASONING_EFFORT') }   # CPU inference is slower
 if ($diag -match 'windows-export-bundle: OK') { $llmEnv.DQ_LLM_CA_BUNDLE = $bundle }
 Check 'AI service starts with the LLM provider' (Start-Ai $llmEnv 'llm')
 $h = Invoke-RestMethod "http://127.0.0.1:$($script:aiPort)/health" -TimeoutSec 5
@@ -297,7 +309,9 @@ if ($llmItems.Count -gt 0) {
 
 # =====================================================================
 Section 'FALLBACK: LLM FAILS -> LOCAL ANALYSIS STILL WORKS'
-$badEnv = $llmEnv.Clone(); $badEnv.DQ_LLM_API_KEY = 'invalid-key-for-fallback-test'
+$badEnv = $llmEnv.Clone()
+if ($Local) { $badEnv.DQ_LLM_BASE_URL = 'http://127.0.0.1:9/v1' }   # nothing listens there: simulates a model that is down
+else { $badEnv.DQ_LLM_API_KEY = 'invalid-key-for-fallback-test' }
 Check 'AI service restarts with an invalid key' (Start-Ai $badEnv 'fallback')
 $fb = Call-Api POST '/api/v1/ai/suggestions/generate' '{"maxSuggestions":3}'
 Log "fallback generate :: $($fb.Raw)"
