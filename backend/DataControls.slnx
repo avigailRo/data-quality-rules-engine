@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DataControls.Domain/DataControls.Domain.csproj" />
+    <Project Path="src/DataControls.Application/DataControls.Application.csproj" />
+    <Project Path="src/DataControls.Infrastructure/DataControls.Infrastructure.csproj" />
+    <Project Path="src/DataControls.Api/DataControls.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DataControls.Tests/DataControls.Tests.csproj" />
+  </Folder>
+</Solution>

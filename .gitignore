@@ -1,0 +1,19 @@
+**/bin/
+**/obj/
+.vs/
+*.user
+**/node_modules/
+frontend/dist/
+frontend/.angular/
+**/__pycache__/
+ai-service/.venv/
+.pytest_cache/
+*.log
+# QA output (logs, run artifacts, exported public CA bundle)
+qa/*.txt
+qa/*.pem
+# local secrets / environment files - never commit
+.env
+.env.*
+**/appsettings.*.local.json
+qa/proxy.qa.json
