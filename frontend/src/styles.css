@@ -271,3 +271,17 @@ textarea { resize: vertical; }
 .help-steps { margin: var(--s3) 0 var(--s2); padding-inline-start: 1.2rem; display: flex; flex-direction: column; gap: 6px; line-height: 1.6; }
 .help code { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; font-size: .82em; direction: ltr; unicode-bidi: embed; }
 @media (max-width: 760px) { .kpis-3 { grid-template-columns: 1fr; } }
+
+/* ---------- data map (catalog) ---------- */
+.data-map { margin-bottom: var(--s4); }
+.map-title { display: flex; gap: 6px; align-items: center; font-size: 1.05rem; margin: 0 0 var(--s1); }
+.map-svg { width: 100%; height: auto; max-height: 440px; display: block; margin-top: var(--s2); }
+.map-edge { stroke: #94a3b8; stroke-width: 1.6; }
+.map-arrow-head { fill: #94a3b8; }
+.map-edge-label { font-size: 12px; fill: var(--text-2); paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+.map-node { cursor: pointer; outline: none; }
+.map-node rect { fill: var(--primary-50); stroke: var(--primary); stroke-width: 1.5; transition: fill .15s; }
+.map-node:hover rect, .map-node:focus-visible rect { fill: #dbe6ff; stroke-width: 2.5; }
+.map-node-name { font-size: 15px; font-weight: 700; fill: var(--text); }
+.map-node-meta { font-size: 12px; fill: var(--muted); }
+

@@ -34,17 +34,17 @@ interface PreviewState { loading: boolean; result?: PreviewResult; error?: strin
 
     <section class="ai-pipeline card" aria-label="איך זה עובד">
       <ol>
-        <li><dc-icon name="database" /><div><strong>ניתוח מבנה</strong><span>ישויות, שדות וקשרים מהקטלוג העסקי</span></div></li>
-        <li><dc-icon name="cpu" /><div><strong>פרופיל סטטיסטי</strong><span>חוסרים, סדר תאריכים, חריגים – אגרגציות בלבד</span></div></li>
+        <li><dc-icon name="database" /><div><strong>ניתוח המבנה</strong><span>הנושאים, השדות והקשרים שבקטלוג</span></div></li>
+        <li><dc-icon name="cpu" /><div><strong>ניתוח הנתונים</strong><span>ערכים חסרים, תאריכים לא הגיוניים וחריגים – סיכומים בלבד, בלי רשומות</span></div></li>
         <li><dc-icon name="sparkles" /><div><strong>יצירת הצעות</strong><span>{{ engineLabel() }}</span></div></li>
-        <li><dc-icon name="check" /><div><strong>אימות ואישור</strong><span>ולידציה כפולה, ואז אישור אנושי לטיוטה</span></div></li>
+        <li><dc-icon name="check" /><div><strong>בדיקה ואישור</strong><span>כל הצעה נבדקת אוטומטית, ונשמרת רק אחרי אישור שלך</span></div></li>
       </ol>
       @if (status(); as s) {
         <p class="ai-status" [class.off]="!s.available">
           <span class="dot" [class.dot-ok]="s.available" [class.dot-off]="!s.available" aria-hidden="true"></span>
           @if (s.available) {
             @if (s.isLlm) { מנוע מוגדר: מודל שפה ({{ s.model ?? s.provider }}). נשלחים אליו שמות עסקיים וסטטיסטיקה מצטברת בלבד – ללא רשומות. אם המודל אינו זמין, הניתוח המקומי עונה במקומו וכל הצעה מסומנת לפי המקור שיצר אותה בפועל. }
-            @else { מנוע פעיל: ניתוח מקומי מבוסס Metadata וסטטיסטיקה, ללא תלות בשירות חיצוני וללא שליחת נתונים החוצה. אפשר לחבר מודל שפה (Gemini, OpenAI או Ollama מקומי) דרך הגדרות השירות בלבד, בלי שינוי קוד. }
+            @else { מנוע פעיל: ניתוח אוטומטי של מבנה הנתונים והסטטיסטיקה שלהם, בתוך הארגון וללא שליחת נתונים החוצה. אפשר לחבר מודל שפה (Gemini, OpenAI או Ollama מקומי) בהגדרות השירות, בלי שינוי קוד. }
           } @else { שירות ההמלצות אינו זמין כרגע. שאר המערכת פועלת כרגיל – אפשר ליצור ולהריץ בקרות ידנית. }
         </p>
       }
@@ -55,7 +55,7 @@ interface PreviewState { loading: boolean; result?: PreviewResult; error?: strin
         <dc-icon name="info" />
         <span>
           נוצרו {{ r.proposed }} הצעות חדשות ({{ r.isLlm ? 'מודל שפה ' + (r.model ?? r.provider) : 'ניתוח מקומי' }}).
-          @if (r.fallbackUsed) { מודל השפה לא היה זמין ({{ r.fallbackReason }}) ולכן הופעל הניתוח המקומי. }
+          @if (r.fallbackUsed) { <span [title]="r.fallbackReason ?? ''">מודל השפה לא היה זמין, ולכן ההצעות נוצרו בניתוח המקומי.</span> }
           @if (r.invalid) { {{ r.invalid }} נפסלו בבדיקת התקינות. }
           @if (r.rejectedByAdvisor) { {{ r.rejectedByAdvisor }} תשובות לא תקינות של המודל נדחו. }
           @if (r.duplicates) { {{ r.duplicates }} הושמטו כי בקרה או הצעה זהה כבר קיימות. }
@@ -169,7 +169,7 @@ export class SuggestionsPage {
   engineLabel(): string {
     const s = this.status();
     if (!s?.available) return 'השירות אינו זמין';
-    return s.isLlm ? `מודל שפה (${s.model ?? s.provider}) עם פלט JSON מובנה` : 'מנוע כללים מקומי (ללא LLM)';
+    return s.isLlm ? `מודל שפה (${s.model ?? s.provider}) מנסח הצעות לבקרות` : 'מנוע ההמלצות המקומי מנסח הצעות לבקרות';
   }
 
   setFilter(value: string) { this.filter.set(value); this.load(); }

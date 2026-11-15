@@ -68,7 +68,7 @@ import { PageState, SeverityBadge, StatusBadge } from '../../shared/ui';
             <p>
               @if (a.available) {
                 <span class="dot dot-ok" aria-hidden="true"></span> השירות זמין ·
-                {{ a.isLlm ? 'מודל שפה: ' + (a.model ?? a.provider) : 'ניתוח מקומי (סטטיסטיקה ו־Metadata, ללא LLM)' }}
+                {{ a.isLlm ? 'מודל שפה: ' + (a.model ?? a.provider) : 'מנוע המלצות מקומי (בתוך הארגון)' }}
               } @else { <span class="dot dot-off" aria-hidden="true"></span> השירות אינו זמין כרגע – שאר המערכת פועלת כרגיל. }
             </p>
           }
